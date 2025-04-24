@@ -1,18 +1,12 @@
 use std::io::{Error, ErrorKind};
 use std::time::{Instant, Duration};
 
-fn handle_flag(flag: String) -> Option<String>{
-    match flag.as_str(){
-        "-help" => Some("Help coming soon!".to_string()),
-        _ => None, 
-    }
-}
 
-fn run_executable(path: String, args: Vec<String>) -> Result<Duration, Error>{
+fn run_executable(path: &String, args: &Vec<String>) -> Result<Duration, Error>{
     if path.ends_with(".py"){
-        let mut new_vec:Vec<String> = vec![path];
-        new_vec.extend(args);
-        return run_executable("python3".to_string(), new_vec);
+        let mut new_vec:Vec<String> = vec![(*path).clone()];
+        new_vec.extend((*args).clone());
+        return run_executable(&"python3".to_string(), &new_vec);
     }
 
     let start_time = Instant::now();
@@ -27,6 +21,7 @@ fn run_executable(path: String, args: Vec<String>) -> Result<Duration, Error>{
         Err(Error::new(ErrorKind::Other, "Call ended with status {status}"))
     }
 }
+
 fn main() {
     #[cfg(windows)]
     println!("Windows not supported :(");
@@ -35,18 +30,26 @@ fn main() {
     println!("Hello, world!");
 
     let args = std::env::args().skip(1);
+
+    let mut reps: u32 = 1;
     for arg in args{
         println!("#handling {arg}");
 
         if arg.starts_with('-'){
-            match handle_flag(arg){
-                Some(ret) => println!("{ret}"),
-                None => println!("Invalid flag"),
+            match arg.as_str(){
+                "-help" => println!("Help coming soon!"),
+                _ => {
+                    if let Some(val) = arg.strip_prefix("-n="){
+                        reps = val.parse::<u32>().unwrap();
+                    }
+                }, 
+
             }
         }
-
         else{
-            let _ = run_executable(arg, [].to_vec());
+            for _ in 0..reps{
+                let _ = run_executable(&arg, &[].to_vec());
+            }
         }
     }
 }
