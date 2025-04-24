@@ -1,4 +1,5 @@
 use std::io::{Error, ErrorKind};
+use std::time::{SystemTime, UNIX_EPOCH, Instant, Duration};
 
 fn handle_flag(flag: String) -> Option<String>{
     match flag.as_str(){
@@ -7,19 +8,19 @@ fn handle_flag(flag: String) -> Option<String>{
     }
 }
 
-fn run_executable(path: String, args: Vec<String>) -> Result<String, std::io::Error>{
+fn run_executable(path: String, args: Vec<String>) -> Result<u128, std::io::Error>{
     if path.ends_with(".py"){
-        let status = std::process::Command::new("python3").args([path].into_iter().chain(args.into_iter())).status()?;
-        if status.success(){
-            return Ok("Hip hip hurray".to_string());
-        }
-        else{
-            return Err(Error::new(ErrorKind::Other, "Call ended with status {status}"));
-        }
+        let mut new_vec:Vec<String> = vec![path];
+        new_vec.extend(args);
+        return run_executable("python3".to_string(), new_vec);
     }
+
+    let start_time = Instant::now();
     let status = std::process::Command::new(path).args(args).status()?;
+    let finish_time = start_time.elapsed().as_millis();
+    println!("took {finish_time}ms time");
     if status.success(){
-        Ok("Hip hip hurray".to_string())
+        Ok(finish_time)
     }
     else{
         Err(Error::new(ErrorKind::Other, "Call ended with status {status}"))
