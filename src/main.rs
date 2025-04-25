@@ -11,7 +11,10 @@ fn main() {
     for arg in args{
         if arg.starts_with('-'){
             match arg.as_str(){
-                "-help" => println!("Help coming soon!"),
+                "-help" => {
+                    print_help();
+                    break;
+                }
                 "-out" => out = true,
                 _ => {
                     if let Some(val) = arg.strip_prefix("-n="){
@@ -75,3 +78,15 @@ fn print_results(reps: u32, total_duration: Duration) {
     if avg_ms > 10 && avg_ms < 10000 {println!("{avg_ms} milliseconds");}
     if avg_mus < 10000 {println!("{avg_mus} microseconds");}
 }
+
+fn print_help(){
+    println!("Simr is a simple tool for executable runtime evaluation
+
+Flags:
+-n=x   will cause the tool to run the program x times (default value is 1)
+-out   program output will be directed to a simr_out.txt file in your current directory (by default the output will be voided)
+-help  show this message
+");
+}
+
+
