@@ -1,4 +1,4 @@
-use std::fs::{File, OpenOptions};
+use std::fs::OpenOptions;
 use std::process::{Command, Stdio};
 use std::io::{Error, ErrorKind};
 use std::time::{Instant, Duration};
@@ -68,10 +68,10 @@ fn print_results(reps: u32, total_duration: Duration) {
     let avg_s = total_s / reps as f64;
     let avg_ms = total_ms / reps as u128;
     let avg_mus = total_mus / reps as u128;
-    println!("Runs executed: {reps}");
-    println!("Total runtime: {total_s} seconds");
-    println!("Average runtime:");
-    if avg_s > 0.2 {println!("{avg_s} seconds");}
+    println!("Runs executed:   {reps}");
+    println!("Total runtime:   {total_s} seconds");
+    print!("Average runtime: ");
+    if avg_s > 1.0 {println!("{avg_s} seconds");}
     if avg_ms > 10 && avg_ms < 10000 {println!("{avg_ms} milliseconds");}
     if avg_mus < 10000 {println!("{avg_mus} microseconds");}
 }
